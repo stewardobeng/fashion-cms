@@ -21,7 +21,7 @@ import {
   getRefashioningTypeDisplayName,
   getEmbellishmentTypeDisplayName
 } from '@/types';
-import { validateClientData } from '@/utils';
+import { validateClientData, parseColorShades, parseRefashioning, parseEmbellishments, stringifyColorShades, stringifyRefashioning, stringifyEmbellishments } from '@/utils';
 
 interface ClientFormProps {
   client?: Client | null;
@@ -29,29 +29,43 @@ interface ClientFormProps {
   onCancel: () => void;
 }
 
+// Form data type for local state (with parsed objects)
+type ClientFormData = Omit<CreateClientData, 'colorShades' | 'refashioning' | 'embellishments'> & {
+  colorShades: ColorShade[];
+  refashioning: RefashioningPreferences;
+  embellishments: EmbellishmentPreferences;
+};
+
 export default function ClientForm({ client, onSubmit, onCancel }: ClientFormProps) {
-  const [formData, setFormData] = useState<CreateClientData>({
-    firstName: client?.firstName || '',
-    lastName: client?.lastName || '',
-    email: client?.email || '',
-    phone: client?.phone || '',
-    address: {
-      street: client?.address.street || '',
-      city: client?.address.city || '',
-      state: client?.address.state || '',
-      zipCode: client?.address.zipCode || '',
-      country: client?.address.country || 'USA',
-    },
-    ageBracket: client?.ageBracket || undefined,
-    dateJoined: client?.dateJoined || new Date().toISOString().split('T')[0],
-    skinColor: client?.skinColor || undefined,
-    ukSize: client?.ukSize || undefined,
-    colorShades: client?.colorShades || [],
-    refashioning: client?.refashioning || { selectedTypes: [], notes: '' },
-    embellishments: client?.embellishments || { selectedTypes: [], notes: '' },
-    notes: client?.notes || '',
-    preferredContactMethod: client?.preferredContactMethod || 'email',
-    status: client?.status || ClientStatus.ACTIVE,
+  const [formData, setFormData] = useState<ClientFormData>(() => {
+    // Parse JSON fields for form state
+    const colorShades = client ? parseColorShades(client.colorShades) : [];
+    const refashioning = client ? parseRefashioning(client.refashioning) : { selectedTypes: [], notes: '' };
+    const embellishments = client ? parseEmbellishments(client.embellishments) : { selectedTypes: [], notes: '' };
+
+    return {
+      firstName: client?.firstName || '',
+      lastName: client?.lastName || '',
+      email: client?.email || '',
+      phone: client?.phone || '',
+      address: {
+        street: client?.address.street || '',
+        city: client?.address.city || '',
+        state: client?.address.state || '',
+        zipCode: client?.address.zipCode || '',
+        country: client?.address.country || 'USA',
+      },
+      ageBracket: client?.ageBracket || undefined,
+      dateJoined: client?.dateJoined || new Date().toISOString().split('T')[0],
+      skinColor: client?.skinColor || undefined,
+      ukSize: client?.ukSize || undefined,
+      colorShades,
+      refashioning: refashioning || { selectedTypes: [], notes: '' },
+      embellishments: embellishments || { selectedTypes: [], notes: '' },
+      notes: client?.notes || '',
+      preferredContactMethod: client?.preferredContactMethod || 'email',
+      status: client?.status || ClientStatus.ACTIVE,
+    };
   });
 
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -175,8 +189,16 @@ export default function ClientForm({ client, onSubmit, onCancel }: ClientFormPro
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Convert form data to the format expected by the API (with JSON strings)
+    const submitData: CreateClientData = {
+      ...formData,
+      colorShades: stringifyColorShades(formData.colorShades),
+      refashioning: stringifyRefashioning(formData.refashioning),
+      embellishments: stringifyEmbellishments(formData.embellishments),
+    };
+
     // Validate form data
-    const validationErrors = validateClientData(formData);
+    const validationErrors = validateClientData(submitData);
     
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
@@ -187,10 +209,10 @@ export default function ClientForm({ client, onSubmit, onCancel }: ClientFormPro
     try {
       if (client) {
         // Update existing client
-        await DataService.updateClient(client.id, formData);
+        await DataService.updateClient(client.id, submitData);
       } else {
         // Create new client
-        await DataService.createClient(formData);
+        await DataService.createClient(submitData);
       }
       
       onSubmit();

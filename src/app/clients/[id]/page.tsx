@@ -764,6 +764,11 @@ function InvoicesTab({ invoices, onGenerateInvoice, onRecordPayment }: {
 
 // Others Tab Component
 function OthersTab({ client }: { client: ClientWithDetails }) {
+  // Parse JSON fields for this component
+  const colorShades = parseColorShades(client.colorShades);
+  const refashioning = parseRefashioning(client.refashioning);
+  const embellishments = parseEmbellishments(client.embellishments);
+
   return (
     <div className="space-y-6">
       {/* UK Size Chart Section */}
