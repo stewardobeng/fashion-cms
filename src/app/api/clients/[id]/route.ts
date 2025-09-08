@@ -14,16 +14,18 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     // Validate the ID format
-    if (!params.id || typeof params.id !== 'string') {
+    if (!id || typeof id !== 'string') {
       return createErrorResponse('Invalid client ID', 400);
     }
 
     const rawClient = await prisma.client.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         clientServices: {
           include: {
@@ -61,11 +63,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     // Validate the ID format
-    if (!params.id || typeof params.id !== 'string') {
+    if (!id || typeof id !== 'string') {
       return createErrorResponse('Invalid client ID', 400);
     }
 
@@ -73,7 +77,7 @@ export async function PUT(
     
     // Check if client exists
     const existingClient = await prisma.client.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     
     if (!existingClient) {
@@ -127,7 +131,7 @@ export async function PUT(
     }
     
     const rawClient = await prisma.client.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     });
     
@@ -153,17 +157,19 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     // Validate the ID format
-    if (!params.id || typeof params.id !== 'string') {
+    if (!id || typeof id !== 'string') {
       return createErrorResponse('Invalid client ID', 400);
     }
 
     // Check if client exists
     const existingClient = await prisma.client.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     
     if (!existingClient) {
@@ -172,7 +178,7 @@ export async function DELETE(
     
     // Delete client (cascade will handle related records)
     await prisma.client.delete({
-      where: { id: params.id },
+      where: { id },
     });
     
     return createSuccessResponse(null, 'Client deleted successfully');

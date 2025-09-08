@@ -14,11 +14,13 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     const service = await prisma.service.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         clientServices: {
           include: {
@@ -40,14 +42,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await validateRequest(request);
     
     // Check if service exists
     const existingService = await prisma.service.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     
     if (!existingService) {
@@ -80,7 +83,7 @@ export async function PUT(
     }
     
     const service = await prisma.service.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     });
     
@@ -92,12 +95,14 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     // Check if service exists
     const existingService = await prisma.service.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     
     if (!existingService) {
@@ -106,7 +111,7 @@ export async function DELETE(
     
     // Check if service is being used
     const clientServiceCount = await prisma.clientService.count({
-      where: { serviceId: params.id },
+      where: { serviceId: id },
     });
     
     if (clientServiceCount > 0) {
@@ -117,7 +122,7 @@ export async function DELETE(
     }
     
     await prisma.service.delete({
-      where: { id: params.id },
+      where: { id },
     });
     
     return createSuccessResponse(null, 'Service deleted successfully');
