@@ -17,9 +17,9 @@ export interface Client {
   dateJoined: string;
   skinColor?: SkinColor;
   ukSize?: UKSize;
-  colorShades?: ColorShade[];
-  refashioning?: RefashioningPreferences;
-  embellishments?: EmbellishmentPreferences;
+  colorShades?: string; // JSON string
+  refashioning?: string; // JSON string
+  embellishments?: string; // JSON string
   notes?: string;
   preferredContactMethod: 'email' | 'phone' | 'text';
   createdAt: string;
@@ -37,7 +37,7 @@ export interface Service {
   basePrice: number;
   duration: number; // in minutes
   isActive: boolean;
-  requirements?: string[];
+  requirements?: string;
   createdAt: string;
   updatedAt: string;
 }

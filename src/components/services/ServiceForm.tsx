@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { DataService } from '@/lib/data-service';
 import { Service, CreateServiceData, ServiceCategory, ValidationError } from '@/types';
-import { validateServiceData } from '@/utils';
+import { validateServiceData, parseRequirements, stringifyRequirements } from '@/utils';
 
 interface ServiceFormProps {
   service?: Service | null;
@@ -19,12 +19,15 @@ export default function ServiceForm({ service, onSubmit, onCancel }: ServiceForm
     basePrice: service?.basePrice || 0,
     duration: service?.duration || 60,
     isActive: service?.isActive ?? true,
-    requirements: service?.requirements || [],
+    requirements: service?.requirements || '',
   });
 
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [requirementInput, setRequirementInput] = useState('');
+  
+  // Parse requirements for display
+  const requirementsArray = parseRequirements(formData.requirements);
 
   const getFieldError = (fieldName: string): string | undefined => {
     const error = errors.find(e => e.field === fieldName);
@@ -57,18 +60,22 @@ export default function ServiceForm({ service, onSubmit, onCancel }: ServiceForm
 
   const handleAddRequirement = () => {
     if (requirementInput.trim()) {
+      const currentRequirements = parseRequirements(formData.requirements);
+      const updatedRequirements = [...currentRequirements, requirementInput.trim()];
       setFormData(prev => ({
         ...prev,
-        requirements: [...(prev.requirements || []), requirementInput.trim()],
+        requirements: stringifyRequirements(updatedRequirements),
       }));
       setRequirementInput('');
     }
   };
 
   const handleRemoveRequirement = (index: number) => {
+    const currentRequirements = parseRequirements(formData.requirements);
+    const updatedRequirements = currentRequirements.filter((_, i) => i !== index);
     setFormData(prev => ({
       ...prev,
-      requirements: prev.requirements?.filter((_, i) => i !== index) || [],
+      requirements: stringifyRequirements(updatedRequirements),
     }));
   };
 
@@ -260,9 +267,9 @@ export default function ServiceForm({ service, onSubmit, onCancel }: ServiceForm
             </button>
           </div>
           
-          {formData.requirements && formData.requirements.length > 0 && (
+          {requirementsArray.length > 0 && (
             <div className="space-y-1">
-              {formData.requirements.map((requirement, index) => (
+              {requirementsArray.map((requirement, index) => (
                 <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
                   <span className="text-sm text-gray-700">{requirement}</span>
                   <button

@@ -65,7 +65,7 @@ export async function initializeDatabase(): Promise<void> {
             category: "custom_couture",
             basePrice: 500.00,
             duration: 240, // 4 hours
-            requirements: ["measurements", "fabric_selection", "consultation"]
+            requirements: JSON.stringify(["measurements", "fabric_selection", "consultation"])
           }
         }),
         prisma.service.create({
@@ -75,7 +75,7 @@ export async function initializeDatabase(): Promise<void> {
             category: "alterations",
             basePrice: 75.00,
             duration: 90, // 1.5 hours
-            requirements: ["garment", "fitting_appointment"]
+            requirements: JSON.stringify(["garment", "fitting_appointment"])
           }
         }),
         prisma.service.create({
@@ -85,7 +85,7 @@ export async function initializeDatabase(): Promise<void> {
             category: "consultation",
             basePrice: 100.00,
             duration: 60, // 1 hour
-            requirements: ["appointment"]
+            requirements: JSON.stringify(["appointment"])
           }
         })
       ]);
@@ -106,15 +106,15 @@ export async function initializeDatabase(): Promise<void> {
           dateJoined: new Date(),
           skinColor: "fair",
           ukSize: "12",
-          colorShades: ["blue", "green", "purple"],
-          refashioning: {
+          colorShades: JSON.stringify(["blue", "green", "purple"]),
+          refashioning: JSON.stringify({
             selectedTypes: ["sleeve", "neckline"],
             notes: "Prefers modern classic styles"
-          },
-          embellishments: {
+          }),
+          embellishments: JSON.stringify({
             selectedTypes: ["beads"],
             notes: "Minimal embellishments preferred"
-          },
+          }),
           notes: "VIP client - prefers appointments on weekends",
           preferredContactMethod: "email",
           status: "vip"

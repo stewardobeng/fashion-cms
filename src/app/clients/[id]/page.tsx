@@ -25,7 +25,7 @@ import {
   getRefashioningTypeDisplayName,
   getEmbellishmentTypeDisplayName
 } from '@/types';
-import { formatDate, getClientStatusColor, calculateTotalSpent } from '@/utils';
+import { formatDate, getClientStatusColor, calculateTotalSpent, parseColorShades, parseRefashioning, parseEmbellishments } from '@/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
@@ -199,6 +199,11 @@ export default function ClientDetailPage() {
       </div>
     );
   }
+  
+  // Parse JSON fields
+  const colorShades = parseColorShades(client.colorShades);
+  const refashioning = parseRefashioning(client.refashioning);
+  const embellishments = parseEmbellishments(client.embellishments);
 
   const tabs = [
     { id: 'overview', label: 'Overview', count: null },
@@ -815,9 +820,9 @@ function OthersTab({ client }: { client: ClientWithDetails }) {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Color Shades</h3>
-            {client.colorShades && client.colorShades.length > 0 ? (
+            {colorShades && colorShades.length > 0 ? (
               <div className="flex flex-wrap gap-2">
-                {client.colorShades.map((color) => (
+                {colorShades.map((color) => (
                   <span
                     key={color}
                     className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium"
@@ -836,10 +841,10 @@ function OthersTab({ client }: { client: ClientWithDetails }) {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Refashioning Preferences</h3>
-            {client.refashioning && client.refashioning.selectedTypes && client.refashioning.selectedTypes.length > 0 ? (
+            {refashioning && refashioning.selectedTypes && refashioning.selectedTypes.length > 0 ? (
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {client.refashioning.selectedTypes.map((type) => (
+                  {refashioning.selectedTypes.map((type) => (
                     <span
                       key={type}
                       className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
@@ -848,10 +853,10 @@ function OthersTab({ client }: { client: ClientWithDetails }) {
                     </span>
                   ))}
                 </div>
-                {client.refashioning.notes && (
+                {refashioning.notes && (
                   <div>
                     <label className="text-sm font-medium text-gray-500">Notes:</label>
-                    <p className="text-gray-700 text-sm mt-1">{client.refashioning.notes}</p>
+                    <p className="text-gray-700 text-sm mt-1">{refashioning.notes}</p>
                   </div>
                 )}
               </div>
@@ -865,10 +870,10 @@ function OthersTab({ client }: { client: ClientWithDetails }) {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Embellishments</h3>
-            {client.embellishments && client.embellishments.selectedTypes && client.embellishments.selectedTypes.length > 0 ? (
+            {embellishments && embellishments.selectedTypes && embellishments.selectedTypes.length > 0 ? (
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {client.embellishments.selectedTypes.map((type) => (
+                  {embellishments.selectedTypes.map((type) => (
                     <span
                       key={type}
                       className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium"
@@ -877,10 +882,10 @@ function OthersTab({ client }: { client: ClientWithDetails }) {
                     </span>
                   ))}
                 </div>
-                {client.embellishments.notes && (
+                {embellishments.notes && (
                   <div>
                     <label className="text-sm font-medium text-gray-500">Notes:</label>
-                    <p className="text-gray-700 text-sm mt-1">{client.embellishments.notes}</p>
+                    <p className="text-gray-700 text-sm mt-1">{embellishments.notes}</p>
                   </div>
                 )}
               </div>

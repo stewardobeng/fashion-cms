@@ -1,7 +1,7 @@
 'use client';
 
 import { Service, ServiceCategory } from '@/types';
-import { formatCurrency } from '@/utils';
+import { formatCurrency, parseRequirements } from '@/utils';
 
 interface ServiceCardProps {
   service: Service;
@@ -61,6 +61,8 @@ const formatDuration = (minutes: number): string => {
 };
 
 export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
+  const requirementsArray = parseRequirements(service.requirements);
+  
   return (
     <div className="card hover:shadow-md transition-shadow duration-200">
       {/* Header */}
@@ -126,19 +128,19 @@ export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardPr
       </div>
 
       {/* Requirements */}
-      {service.requirements && service.requirements.length > 0 && (
+      {requirementsArray.length > 0 && (
         <div className="mb-4">
           <h4 className="text-sm font-medium text-gray-700 mb-2">Requirements:</h4>
           <div className="space-y-1">
-            {service.requirements.slice(0, 3).map((requirement, index) => (
+            {requirementsArray.slice(0, 3).map((requirement, index) => (
               <div key={index} className="text-xs text-gray-600 flex items-center">
                 <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
                 {requirement}
               </div>
             ))}
-            {service.requirements.length > 3 && (
+            {requirementsArray.length > 3 && (
               <div className="text-xs text-gray-500 italic">
-                +{service.requirements.length - 3} more requirements
+                +{requirementsArray.length - 3} more requirements
               </div>
             )}
           </div>

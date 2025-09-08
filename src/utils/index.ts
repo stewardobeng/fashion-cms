@@ -12,6 +12,9 @@ import {
   InvoiceStatus,
   ClientStatus,
   Currency,
+  ColorShade,
+  RefashioningPreferences,
+  EmbellishmentPreferences,
   getCurrencySymbol
 } from '@/types';
 
@@ -79,6 +82,62 @@ export const formatCurrency = (amount: number, currency: Currency = Currency.USD
 // Legacy function for backward compatibility
 export const formatCurrencyUSD = (amount: number): string => {
   return formatCurrency(amount, Currency.USD);
+};
+
+// Service Requirements Helpers
+export const parseRequirements = (requirements?: string): string[] => {
+  if (!requirements) return [];
+  try {
+    const parsed = JSON.parse(requirements);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+export const stringifyRequirements = (requirements: string[]): string => {
+  return JSON.stringify(requirements);
+};
+
+// Client JSON Field Helpers
+export const parseColorShades = (colorShades?: string): ColorShade[] => {
+  if (!colorShades) return [];
+  try {
+    const parsed = JSON.parse(colorShades);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+export const stringifyColorShades = (colorShades: ColorShade[]): string => {
+  return JSON.stringify(colorShades);
+};
+
+export const parseRefashioning = (refashioning?: string): RefashioningPreferences | undefined => {
+  if (!refashioning) return undefined;
+  try {
+    return JSON.parse(refashioning);
+  } catch {
+    return undefined;
+  }
+};
+
+export const stringifyRefashioning = (refashioning: RefashioningPreferences): string => {
+  return JSON.stringify(refashioning);
+};
+
+export const parseEmbellishments = (embellishments?: string): EmbellishmentPreferences | undefined => {
+  if (!embellishments) return undefined;
+  try {
+    return JSON.parse(embellishments);
+  } catch {
+    return undefined;
+  }
+};
+
+export const stringifyEmbellishments = (embellishments: EmbellishmentPreferences): string => {
+  return JSON.stringify(embellishments);
 };
 
 // Data Creation Helpers
