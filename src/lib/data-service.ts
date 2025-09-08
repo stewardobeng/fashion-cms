@@ -71,16 +71,23 @@ class ApiClient {
   }
 
   async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
-    const url = new URL(`${this.baseUrl}${endpoint}`);
-    if (params) {
+    // Build URL properly for both development and production
+    let url: string;
+    const fullEndpoint = `${this.baseUrl}${endpoint}`;
+    
+    if (params && Object.keys(params).length > 0) {
+      const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          url.searchParams.append(key, String(value));
+          searchParams.append(key, String(value));
         }
       });
+      url = `${fullEndpoint}?${searchParams.toString()}`;
+    } else {
+      url = fullEndpoint;
     }
     
-    const response = await fetch(url.toString());
+    const response = await fetch(url);
     
     if (!response.ok) {
       if (response.status === 404) {
