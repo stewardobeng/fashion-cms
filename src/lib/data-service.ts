@@ -31,7 +31,7 @@ import {
   getCurrentISOString,
 } from '@/utils';
 
-// API Base URL
+// API Base URL - Updated for URL construction fix
 const API_BASE_URL = process.env.NODE_ENV === 'development' 
   ? 'http://localhost:3000/api'
   : '/api';
@@ -75,6 +75,14 @@ class ApiClient {
     let url: string;
     const fullEndpoint = `${this.baseUrl}${endpoint}`;
     
+    // Debug logging for production issues
+    console.log('[DataService] Building URL:', {
+      baseUrl: this.baseUrl,
+      endpoint,
+      fullEndpoint,
+      NODE_ENV: process.env.NODE_ENV
+    });
+    
     if (params && Object.keys(params).length > 0) {
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
@@ -86,6 +94,8 @@ class ApiClient {
     } else {
       url = fullEndpoint;
     }
+    
+    console.log('[DataService] Final URL:', url);
     
     const response = await fetch(url);
     
