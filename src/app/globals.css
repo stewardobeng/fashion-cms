@@ -1,0 +1,166 @@
+refreshenv@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for the Fashion Client Management System */
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-gray-50;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-gray-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200 font-medium;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200 font-medium;
+  }
+  
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200 font-medium;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200;
+  }
+  
+  .input-error {
+    @apply border-red-300 focus:ring-red-500 focus:border-red-500;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
+  
+  .card-header {
+    @apply border-b border-gray-200 pb-4 mb-4;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .table-row {
+    @apply border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150;
+  }
+  
+  .nav-link {
+    @apply flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200;
+  }
+  
+  .nav-link-active {
+    @apply bg-primary-100 text-primary-700;
+  }
+  
+  .nav-link-inactive {
+    @apply text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+  }
+}
+
+@layer utilities {
+  .text-primary {
+    @apply text-primary-600;
+  }
+  
+  .bg-primary {
+    @apply bg-primary-600;
+  }
+  
+  .border-primary {
+    @apply border-primary-600;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  body {
+    background: white !important;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .print-container {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  
+  h1, h2, h3 {
+    color: black !important;
+  }
+  
+  .bg-gray-50, .bg-gray-100 {
+    background-color: #f8f9fa !important;
+  }
+  
+  .border-gray-200 {
+    border-color: #e5e7eb !important;
+  }
+  
+  table {
+    width: 100% !important;
+  }
+  
+  .text-primary-600 {
+    color: #dc2626 !important;
+  }
+  
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .print-container {
+    page-break-inside: avoid;
+  }
+  
+  table {
+    page-break-inside: auto;
+  }
+  
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  
+  thead {
+    display: table-header-group;
+  }
+  
+  tfoot {
+    display: table-footer-group;
+  }
+}
+
+/* Hide print-only elements by default */
+.print-only {
+  display: none;
+}
+
+/* Sidebar responsive behavior */
+@media (max-width: 768px) {
+  .sidebar-responsive {
+    transform: translateX(-100%);
+  }
+  
+  .main-content-responsive {
+    margin-left: 0 !important;
+  }
+}
