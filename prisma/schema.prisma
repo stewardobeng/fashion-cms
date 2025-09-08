@@ -29,6 +29,9 @@ model AppSettings {
   invoiceDueInDays  Int      @default(30)
   fromEmail         String?
   fromName          String?
+  autoBackup        Boolean  @default(false)
+  backupFrequency   String   @default("weekly")
+  retentionDays     Int      @default(30)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
