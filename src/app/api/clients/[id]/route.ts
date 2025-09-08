@@ -17,6 +17,11 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validate the ID format
+    if (!params.id || typeof params.id !== 'string') {
+      return createErrorResponse('Invalid client ID', 400);
+    }
+
     const rawClient = await prisma.client.findUnique({
       where: { id: params.id },
       include: {
@@ -27,8 +32,6 @@ export async function GET(
         },
         invoices: true,
         payments: true,
-        measurements: true,
-        measurementSets: true,
       },
     });
     
@@ -61,6 +64,11 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validate the ID format
+    if (!params.id || typeof params.id !== 'string') {
+      return createErrorResponse('Invalid client ID', 400);
+    }
+
     const body = await validateRequest(request);
     
     // Check if client exists
@@ -148,6 +156,11 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validate the ID format
+    if (!params.id || typeof params.id !== 'string') {
+      return createErrorResponse('Invalid client ID', 400);
+    }
+
     // Check if client exists
     const existingClient = await prisma.client.findUnique({
       where: { id: params.id },

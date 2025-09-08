@@ -44,11 +44,10 @@ export async function GET(request: NextRequest) {
         where,
         skip,
         take: limit,
-        orderBy: { scheduledDate: 'desc' },
+        orderBy: { startDate: 'desc' },
         include: {
           client: true,
           service: true,
-          measurements: true,
         },
       }),
       prisma.clientService.count({ where }),
@@ -66,20 +65,17 @@ export async function POST(request: NextRequest) {
     const body = await validateRequest(request, [
       'clientId',
       'serviceId',
-      'scheduledDate',
     ]);
     
     const clientService = await prisma.clientService.create({
       data: {
         clientId: body.clientId,
         serviceId: body.serviceId,
-        scheduledDate: new Date(body.scheduledDate),
-        completedDate: body.completedDate ? new Date(body.completedDate) : null,
-        status: body.status || 'scheduled',
-        assignedStaff: body.assignedStaff,
+        startDate: body.startDate ? new Date(body.startDate) : null,
+        completionDate: body.completionDate ? new Date(body.completionDate) : null,
+        status: body.status || 'active',
         notes: body.notes,
         customPrice: body.customPrice ? parseFloat(body.customPrice) : null,
-        fittingDates: body.fittingDates,
       },
       include: {
         client: true,

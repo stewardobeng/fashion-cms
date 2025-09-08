@@ -81,12 +81,26 @@ class ApiClient {
     }
     
     const response = await fetch(url.toString());
-    const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(data.error || 'API request failed');
+      if (response.status === 404) {
+        // For 404 errors, return null instead of throwing
+        console.warn(`Resource not found: ${endpoint}`);
+        return null as T;
+      }
+      
+      let errorMessage = 'API request failed';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        // If we can't parse JSON, use default message
+      }
+      
+      throw new Error(errorMessage);
     }
-    
+
+    const data = await response.json();
     return data.data || data;
   }
 
@@ -128,6 +142,12 @@ export class DataService {
 
   static async getClient(id: string): Promise<Client | undefined> {
     try {
+      // Validate ID format
+      if (!id || typeof id !== 'string' || id.trim() === '') {
+        console.warn('Invalid client ID provided:', id);
+        return undefined;
+      }
+      
       return await api.get<Client>(`/clients/${id}`);
     } catch (error) {
       console.error('Error fetching client:', error);
