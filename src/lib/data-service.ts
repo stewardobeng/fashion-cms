@@ -716,4 +716,18 @@ export class DataService {
   static initializeSampleData(): void {
     console.warn('initializeSampleData: Not implemented for API-based storage');
   }
+
+  // Methods expected by BackupRestore component
+  static exportBackup(): string {
+    const data = this.exportData();
+    return JSON.stringify(data, null, 2);
+  }
+
+  static createBackup(): BackupData {
+    return this.exportData();
+  }
+
+  static restoreFromBackup(data: BackupData): boolean {
+    return this.importData(data);
+  }
 }

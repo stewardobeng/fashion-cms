@@ -42,7 +42,7 @@ export async function validateRequest(request: NextRequest, requiredFields: stri
     
     // Check for required fields
     for (const field of requiredFields) {
-      if (!body[field]) {
+      if (body[field] === undefined || body[field] === null) {
         throw new Error(`Missing required field: ${field}`);
       }
     }

@@ -233,7 +233,7 @@ export default function InvoiceForm({ onSubmit, onCancel, preSelectedClientId }:
                     <div className="flex-1">
                       <span className="text-sm font-medium">{service?.name}</span>
                       <div className="text-xs text-gray-500">
-                        Status: {cs.status.charAt(0).toUpperCase() + cs.status.slice(1)} • Scheduled: {new Date(cs.scheduledDate).toLocaleDateString()}
+                        Status: {cs.status.charAt(0).toUpperCase() + cs.status.slice(1)} • Scheduled: {cs.startDate ? new Date(cs.startDate).toLocaleDateString() : 'Not scheduled'}
                       </div>
                     </div>
                   </label>
