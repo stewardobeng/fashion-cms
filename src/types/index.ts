@@ -46,16 +46,13 @@ export interface ClientService {
   id: string;
   clientId: string;
   serviceId: string;
-  scheduledDate: string;
-  completedDate?: string;
+  startDate?: string;
+  completionDate?: string;
   status: ServiceStatus;
-  assignedStaff?: string;
   notes?: string;
   customPrice?: number; // Override base price if needed
   createdAt: string;
   updatedAt: string;
-  measurements?: Measurement[];
-  fittingDates?: string[];
 }
 
 export interface Invoice {

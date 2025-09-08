@@ -23,10 +23,10 @@ export default function PaymentHistory({ clientId, onRecordPayment }: PaymentHis
     loadPayments();
   }, [clientId]);
 
-  const loadPayments = () => {
+  const loadPayments = async () => {
     try {
-      const clientPayments = DataService.getPaymentsByClient(clientId);
-      const invoices = DataService.getInvoices();
+      const clientPayments = await DataService.getPaymentsByClient(clientId);
+      const invoices = await DataService.getInvoices();
       const clientInvoices = invoices.filter(inv => inv.clientId === clientId);
 
       // Find unpaid invoices that can receive payments
