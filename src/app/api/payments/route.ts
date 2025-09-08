@@ -75,8 +75,7 @@ export async function POST(request: NextRequest) {
     }
     
     const paymentAmount = parseFloat(body.amount);
-    // Use the actual field names as they exist in database
-    const remainingBalance = (invoice as any).totalAmount - (invoice as any).paidAmount;
+    const remainingBalance = invoice.total - invoice.paidAmount;
     
     if (paymentAmount > remainingBalance + 0.01) {
       return createErrorResponse('Payment amount exceeds remaining balance', 400);
@@ -96,17 +95,17 @@ export async function POST(request: NextRequest) {
     });
     
     // Update invoice paid amount and status
-    const newPaidAmount = (invoice as any).paidAmount + paymentAmount;
-    const newStatus = newPaidAmount >= (invoice as any).totalAmount ? 'paid' : 
+    const newPaidAmount = invoice.paidAmount + paymentAmount;
+    const newStatus = newPaidAmount >= invoice.total ? 'paid' : 
                      newPaidAmount > 0 ? 'partially_paid' : invoice.status;
     
     await prisma.invoice.update({
       where: { id: body.invoiceId },
       data: {
-        // paidAmount: newPaidAmount, // Temporarily disabled due to schema mismatch
+        paidAmount: newPaidAmount,
         status: newStatus,
-        // paymentMethod: newStatus === 'paid' ? body.paymentMethod : (invoice as any).paymentMethod,
-        // paymentDate: newStatus === 'paid' ? new Date(body.paymentDate) : (invoice as any).paymentDate,
+        paymentMethod: newStatus === 'paid' ? body.paymentMethod : invoice.paymentMethod,
+        paymentDate: newStatus === 'paid' ? new Date(body.paymentDate) : invoice.paymentDate,
       },
     });
     
