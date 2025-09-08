@@ -25,7 +25,7 @@ import {
   getRefashioningTypeDisplayName,
   getEmbellishmentTypeDisplayName
 } from '@/types';
-import { formatDate, getClientStatusColor } from '@/utils';
+import { formatDate, getClientStatusColor, calculateTotalSpent } from '@/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
@@ -41,6 +41,7 @@ type ClientWithDetails = Client & {
   services: (ClientService & { service: Service })[];
   invoices: Invoice[];
   measurements: Measurement[];
+  payments: { amount: number }[]; // For calculating totalSpent
 };
 
 export default function ClientDetailPage() {
@@ -265,7 +266,7 @@ export default function ClientDetailPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-primary-600">
-                      {formatAmount(client.totalSpent)}
+                      {formatAmount(calculateTotalSpent(client.payments || []))}
                     </div>
                     <div className="text-sm text-gray-500">Total Spent</div>
                   </div>
@@ -510,7 +511,7 @@ function OverviewTab({ client }: { client: ClientWithDetails }) {
               <div key={service.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
                 <div>
                   <p className="font-medium text-gray-900">{service.service.name}</p>
-                  <p className="text-sm text-gray-500">{formatDate(service.scheduledDate)}</p>
+                  <p className="text-sm text-gray-500">{service.startDate ? formatDate(service.startDate) : 'Not scheduled'}</p>
                 </div>
                 <span className={`px-2 py-1 text-xs rounded-full ${
                   service.status === ServiceStatus.COMPLETED 
@@ -616,7 +617,7 @@ function ServicesTab({ services, onAssignService }: {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatDate(service.scheduledDate)}
+                    {service.startDate ? formatDate(service.startDate) : 'Not scheduled'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full ${
@@ -630,7 +631,7 @@ function ServicesTab({ services, onAssignService }: {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {service.assignedStaff || 'Not assigned'}
+                    {'Not assigned'} {/* assignedStaff field not in schema */}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {formatAmount(service.customPrice || service.service.basePrice)}

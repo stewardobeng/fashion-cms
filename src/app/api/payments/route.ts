@@ -109,21 +109,8 @@ export async function POST(request: NextRequest) {
       },
     });
     
-    // Update client total spent
-    await prisma.$transaction(async (tx) => {
-      const currentClient = await tx.client.findUnique({
-        where: { id: body.clientId },
-      });
-      
-      if (currentClient) {
-        await tx.client.update({
-          where: { id: body.clientId },
-          data: {
-            totalSpent: currentClient.totalSpent + paymentAmount,
-          },
-        });
-      }
-    });
+    // Note: Total spent can be calculated dynamically from payments relation
+    // No need to store it separately to avoid data inconsistency
     
     return createSuccessResponse(payment, 'Payment recorded successfully');
   } catch (error) {

@@ -87,7 +87,7 @@ export const createClient = (data: CreateClientData): Client => ({
   id: generateId(),
   createdAt: getCurrentISOString(),
   updatedAt: getCurrentISOString(),
-  totalSpent: 0,
+  // totalSpent: calculated dynamically from payments relation
 });
 
 export const createService = (data: CreateServiceData): Service => ({
@@ -220,6 +220,11 @@ export const filterServices = (services: Service[], searchTerm: string): Service
     service.description.toLowerCase().includes(term) ||
     service.category.toLowerCase().includes(term)
   );
+};
+
+// Client calculations
+export const calculateTotalSpent = (payments: { amount: number }[]): number => {
+  return payments.reduce((total, payment) => total + payment.amount, 0);
 };
 
 // Invoice Calculations

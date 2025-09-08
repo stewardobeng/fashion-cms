@@ -25,7 +25,7 @@ export interface Client {
   createdAt: string;
   updatedAt: string;
   status: ClientStatus;
-  totalSpent: number;
+  // totalSpent: calculated dynamically from payments relation
   lastServiceDate?: string;
 }
 
@@ -702,7 +702,7 @@ export interface EmbellishmentPreferences {
 }
 
 // Utility types for forms and API responses
-export type CreateClientData = Omit<Client, 'id' | 'createdAt' | 'updatedAt' | 'totalSpent' | 'lastServiceDate'>;
+export type CreateClientData = Omit<Client, 'id' | 'createdAt' | 'updatedAt' | 'lastServiceDate'>;
 export type UpdateClientData = Partial<CreateClientData>;
 
 export type CreateServiceData = Omit<Service, 'id' | 'createdAt' | 'updatedAt'>;
@@ -736,7 +736,7 @@ export interface RevenueByMonth {
 export interface ClientServiceHistory {
   client: Client;
   services: (ClientService & { service: Service })[];
-  totalSpent: number;
+  // totalSpent: calculated dynamically from payments
   lastService?: ClientService & { service: Service };
 }
 
@@ -746,8 +746,8 @@ export interface ClientFilter {
   searchTerm?: string;
   lastServiceFrom?: string;
   lastServiceTo?: string;
-  totalSpentMin?: number;
-  totalSpentMax?: number;
+  // totalSpentMin?: number; // calculated dynamically
+  // totalSpentMax?: number; // calculated dynamically
 }
 
 export interface ServiceFilter {

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,26 +20,26 @@ model AppSettings {
   businessWebsite   String?
   currency          String   @default("USD")
   timezone          String   @default("UTC")
-  taxRate           Float    @default(0.0)
+  taxRate           Float    @default(0)
   invoicePrefix     String   @default("INV")
   invoiceNextNumber Int      @default(1)
   invoiceDueInDays  Int      @default(30)
   fromEmail         String?
   fromName          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   autoBackup        Boolean  @default(false)
   backupFrequency   String   @default("weekly")
   retentionDays     Int      @default(30)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
 
   @@map("app_settings")
 }
 
 model Client {
-  id                     String    @id @default(cuid())
+  id                     String          @id @default(cuid())
   firstName              String
   lastName               String
-  email                  String    @unique
+  email                  String          @unique
   phone                  String?
   streetAddress          String?
   city                   String?
@@ -50,39 +47,35 @@ model Client {
   zipCode                String?
   country                String?
   ageBracket             String?
-  dateJoined             DateTime  @default(now())
+  dateJoined             DateTime        @default(now())
   skinColor              String?
   ukSize                 String?
-  colorShades            Json?
-  refashioning           Json?
-  embellishments         Json?
-  notes                  String?   @db.Text
-  preferredContactMethod String?   @default("email")
-  status                 String?   @default("active")
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
-
-  // Relations
-  clientServices ClientService[]
-  invoices       Invoice[]
-  payments       Payment[]
+  colorShades            String?         @db.LongText
+  refashioning           String?         @db.LongText
+  embellishments         String?         @db.LongText
+  notes                  String?         @db.Text
+  preferredContactMethod String?         @default("email")
+  status                 String?         @default("active")
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  clientServices         ClientService[]
+  invoices               Invoice[]
+  payments               Payment[]
 
   @@map("clients")
 }
 
 model Service {
-  id           String  @id @default(cuid())
-  name         String
-  description  String? @db.Text
-  category     String
-  basePrice    Float
-  duration     Int? // in minutes
-  requirements Json?
-  isActive     Boolean @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relations
+  id             String          @id @default(cuid())
+  name           String
+  description    String?         @db.Text
+  category       String
+  basePrice      Float
+  duration       Int?
+  requirements   String?         @db.LongText
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   clientServices ClientService[]
   invoiceItems   InvoiceItem[]
 
@@ -90,65 +83,64 @@ model Service {
 }
 
 model ClientService {
-  id              String   @id @default(cuid())
-  clientId        String
-  serviceId       String
-  customPrice     Float?
-  notes           String?  @db.Text
-  status          String   @default("active") // active, completed, cancelled
-  startDate       DateTime?
-  completionDate  DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String    @id @default(cuid())
+  clientId       String
+  serviceId      String
+  customPrice    Float?
+  notes          String?   @db.Text
+  status         String    @default("active")
+  startDate      DateTime?
+  completionDate DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  client         Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service        Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  // Relations
-  client  Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-
+  @@index([clientId], map: "client_services_clientId_fkey")
+  @@index([serviceId], map: "client_services_serviceId_fkey")
   @@map("client_services")
 }
 
 model Invoice {
-  id               String   @id @default(cuid())
-  invoiceNumber    String   @unique
+  id               String        @id @default(cuid())
+  invoiceNumber    String        @unique
   clientId         String
-  clientServiceIds Json     @default("[]")
-  issueDate        DateTime @default(now())
+  issueDate        DateTime      @default(now())
   dueDate          DateTime
-  status           String   @default("draft") // draft, sent, paid, overdue, cancelled
-  subtotal         Float    @default(0)
-  tax              Float    @default(0)
-  discount         Float    @default(0)
-  total            Float    @default(0)
-  paidAmount       Float    @default(0)
-  paymentMethod    String?
+  status           String        @default("draft")
+  subtotal         Float         @default(0)
+  notes            String?       @db.Text
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  clientServiceIds String        @db.LongText
+  discount         Float         @default(0)
+  paidAmount       Float         @default(0)
   paymentDate      DateTime?
-  notes            String?  @db.Text
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  paymentMethod    String?
+  tax              Float         @default(0)
+  total            Float         @default(0)
+  invoiceItems     InvoiceItem[]
+  client           Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  payments         Payment[]
 
-  // Relations
-  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  invoiceItems InvoiceItem[]
-  payments     Payment[]
-
+  @@index([clientId], map: "invoices_clientId_fkey")
   @@map("invoices")
 }
 
 model InvoiceItem {
-  id          String @id @default(cuid())
+  id          String   @id @default(cuid())
   invoiceId   String
   serviceId   String?
   description String
-  quantity    Int    @default(1)
+  quantity    Int      @default(1)
   unitPrice   Float
   totalPrice  Float
   createdAt   DateTime @default(now())
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  service     Service? @relation(fields: [serviceId], references: [id])
 
-  // Relations
-  invoice Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  service Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
-
+  @@index([invoiceId], map: "invoice_items_invoiceId_fkey")
+  @@index([serviceId], map: "invoice_items_serviceId_fkey")
   @@map("invoice_items")
 }
 
@@ -157,16 +149,16 @@ model Payment {
   invoiceId     String
   clientId      String
   amount        Float
-  paymentMethod String   @default("cash") // cash, card, bank_transfer, check
+  paymentMethod String   @default("cash")
   paymentDate   DateTime @default(now())
   reference     String?
   notes         String?  @db.Text
   createdAt     DateTime @default(now())
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
-  // Relations
-  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  client  Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
+  @@index([clientId], map: "payments_clientId_fkey")
+  @@index([invoiceId], map: "payments_invoiceId_fkey")
   @@map("payments")
 }
 
@@ -175,7 +167,7 @@ model Staff {
   name      String
   email     String   @unique
   password  String
-  role      String   @default("staff") // admin, staff
+  role      String   @default("staff")
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
