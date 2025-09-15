@@ -52,22 +52,18 @@ echo "Checking default ports..."
 # Check default ports
 APP_PORT=${APP_PORT:-3000}
 DB_PORT=${DB_PORT:-3306}
-PHPMYADMIN_PORT=${PHPMYADMIN_PORT:-8080}
 
 check_port $APP_PORT "Fashion CMS App" || suggest_port $APP_PORT "Fashion CMS App"
 check_port $DB_PORT "MySQL Database" || suggest_port $DB_PORT "MySQL Database"
-check_port $PHPMYADMIN_PORT "phpMyAdmin" || suggest_port $PHPMYADMIN_PORT "phpMyAdmin"
 
 echo ""
 echo "📝 To change ports, edit your .env file:"
 echo "   APP_PORT=8000           # Change app port to 8000"
 echo "   DB_PORT=3307            # Change database port to 3307"
-echo "   PHPMYADMIN_PORT=8081    # Change phpMyAdmin port to 8081"
 echo ""
 echo "Or set environment variables:"
 echo "   export APP_PORT=8000"
 echo "   export DB_PORT=3307"
-echo "   export PHPMYADMIN_PORT=8081"
 echo "   $DOCKER_COMPOSE_CMD up -d"
 echo ""
 
@@ -101,17 +97,6 @@ if [[ $configure_interactive =~ ^[Yy]$ ]]; then
         fi
     done
     
-    # phpMyAdmin port
-    while true; do
-        read -p "Enter port for phpMyAdmin (current: $PHPMYADMIN_PORT): " new_phpmyadmin_port
-        new_phpmyadmin_port=${new_phpmyadmin_port:-$PHPMYADMIN_PORT}
-        
-        if check_port $new_phpmyadmin_port "phpMyAdmin"; then
-            PHPMYADMIN_PORT=$new_phpmyadmin_port
-            break
-        fi
-    done
-    
     # Update .env file
     echo ""
     echo "📄 Updating .env file with new ports..."
@@ -124,13 +109,11 @@ if [[ $configure_interactive =~ ^[Yy]$ ]]; then
     # Update ports in .env file
     sed -i "s/^APP_PORT=.*/APP_PORT=$APP_PORT/" .env
     sed -i "s/^DB_PORT=.*/DB_PORT=$DB_PORT/" .env
-    sed -i "s/^PHPMYADMIN_PORT=.*/PHPMYADMIN_PORT=$PHPMYADMIN_PORT/" .env
     
     echo "✅ Configuration updated!"
     echo ""
     echo "🚀 New access URLs will be:"
     echo "   - Fashion CMS: http://localhost:$APP_PORT"
-    echo "   - phpMyAdmin: http://localhost:$PHPMYADMIN_PORT"
     echo "   - MySQL: localhost:$DB_PORT"
     echo ""
     echo "Run '$DOCKER_COMPOSE_CMD up -d' to apply changes."

@@ -49,26 +49,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # Optional: PhpMyAdmin for database management
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    platform: linux/arm64/v8  # Specify ARM64 platform
-    container_name: fashion-cms-phpmyadmin
-    restart: unless-stopped
-    ports:
-      - "${PHPMYADMIN_PORT:-8080}:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_USER: ${MYSQL_USER:-fashionuser}
-      PMA_PASSWORD: ${MYSQL_PASSWORD:-fashionpass2024}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fashioncms2024}
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - fashion-network
-
 volumes:
   mysql_data:
     driver: local

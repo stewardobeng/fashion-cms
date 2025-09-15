@@ -82,11 +82,9 @@ if not exist ".env" (
 REM Load some environment variables for display
 set APP_PORT=3000
 set DB_PORT=3306
-set PHPMYADMIN_PORT=8080
 
 if defined APP_PORT_ENV set APP_PORT=%APP_PORT_ENV%
 if defined DB_PORT_ENV set DB_PORT=%DB_PORT_ENV%
-if defined PHPMYADMIN_PORT_ENV set PHPMYADMIN_PORT=%PHPMYADMIN_PORT_ENV%
 
 echo 🔧 Building Docker images...
 %DOCKER_COMPOSE_CMD% build
@@ -108,7 +106,6 @@ if errorlevel 1 (
     echo.
     echo 🌐 Application URLs:
     echo    - Fashion CMS: http://localhost:%APP_PORT%
-    echo    - phpMyAdmin: http://localhost:%PHPMYADMIN_PORT%
     echo.
     echo 📊 Database Connection:
     echo    - Host: localhost

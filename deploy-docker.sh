@@ -39,12 +39,10 @@ if [ ! -f ".env" ]; then
 # Port Configuration (change these if ports are not available)
 APP_PORT=3000
 DB_PORT=3306
-PHPMYADMIN_PORT=8081
 
 # Alternative port examples (uncomment and modify as needed):
 # APP_PORT=8000          # Use port 8000 for the app
 # DB_PORT=3307           # Use port 3307 for MySQL
-# PHPMYADMIN_PORT=9000   # Use port 9000 for phpMyAdmin
 
 # Docker Environment Configuration for Fashion CMS
 # Copy this file to .env.docker and customize the values
@@ -89,7 +87,6 @@ if [ -f ".env" ]; then
 fi
 
 APP_PORT=${APP_PORT:-3000}
-PHPMYADMIN_PORT=${PHPMYADMIN_PORT:-8080}
 
 echo "🔧 Building Docker images..."
 $DOCKER_COMPOSE_CMD build
@@ -106,7 +103,6 @@ if $DOCKER_COMPOSE_CMD ps | grep -q "Up"; then
     echo ""
     echo "🌐 Application URLs:"
     echo "   - Fashion CMS: http://localhost:$APP_PORT"
-    echo "   - phpMyAdmin: http://localhost:$PHPMYADMIN_PORT"
     echo ""
     echo "📊 Database Connection:"
     echo "   - Host: localhost"

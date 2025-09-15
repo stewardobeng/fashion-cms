@@ -7,9 +7,8 @@ This guide will help you deploy the Fashion CMS application using Docker on Ubun
 The Docker setup includes:
 - **Fashion CMS Application** (Next.js)
 - **MySQL Database** (with automatic initialization)
-- **phpMyAdmin** (optional database management interface)
 
-All services run on the same Docker network, eliminating latency between the app and database.
+Both services run on the same Docker network, eliminating latency between the app and database.
 
 ## 📋 Prerequisites
 
@@ -108,7 +107,6 @@ NEXTAUTH_URL=http://your-server-ip:3000
 Default ports:
 - **Fashion CMS**: `3000`
 - **MySQL**: `3306`
-- **phpMyAdmin**: `8080`
 
 #### Method 1: Environment Variables (Recommended)
 
@@ -116,7 +114,6 @@ Edit your `.env` file:
 ```bash
 APP_PORT=8000           # Use port 8000 for the app
 DB_PORT=3307            # Use port 3307 for MySQL
-PHPMYADMIN_PORT=8081    # Use port 8081 for phpMyAdmin
 ```
 
 #### Method 2: Direct Docker Compose Override
@@ -131,21 +128,17 @@ services:
   mysql:
     ports:
       - "3307:3306"  # Change MySQL to port 3307
-  phpmyadmin:
-    ports:
-      - "8081:80"    # Change phpMyAdmin to port 8081
 ```
 
 #### Method 3: Environment Variables at Runtime
 
 ```bash
 # Linux/macOS
-APP_PORT=8000 DB_PORT=3307 PHPMYADMIN_PORT=8081 docker compose up -d
+APP_PORT=8000 DB_PORT=3307 docker compose up -d
 
 # Windows
 set APP_PORT=8000
 set DB_PORT=3307
-set PHPMYADMIN_PORT=8081
 docker compose up -d
 ```
 
@@ -229,26 +222,19 @@ docker compose up -d
 
 ## 🗄️ Database Management
 
-### Using phpMyAdmin
-1. Open `http://your-server-ip:8080`
-2. Login with:
-   - Server: `mysql`
-   - Username: `fashionuser` (or your MYSQL_USER)
-   - Password: Your MYSQL_PASSWORD
-
 ### Using MySQL Command Line
 ```bash
 # Connect to MySQL container
-docker-compose exec mysql mysql -u fashionuser -p fashion_cms
+docker compose exec mysql mysql -u fashionuser -p fashion_cms
 ```
 
 ### Database Backup
 ```bash
 # Create backup
-docker-compose exec mysql mysqldump -u fashionuser -p fashion_cms > backup.sql
+docker compose exec mysql mysqldump -u fashionuser -p fashion_cms > backup.sql
 
 # Restore backup
-docker-compose exec -T mysql mysql -u fashionuser -p fashion_cms < backup.sql
+docker compose exec -T mysql mysql -u fashionuser -p fashion_cms < backup.sql
 ```
 
 ## 🔐 Security Considerations

@@ -41,7 +41,6 @@ docker compose ps
 
 After deployment:
 - **Fashion CMS**: http://localhost:3000 (or your custom APP_PORT)
-- **phpMyAdmin**: http://localhost:8080 (or your custom PHPMYADMIN_PORT)
 - **Health Check**: http://localhost:3000/api/health
 
 ### 🔧 Changing Ports
@@ -62,7 +61,6 @@ Edit `.env` file:
 ```bash
 APP_PORT=8000           # Change app port
 DB_PORT=3307            # Change database port
-PHPMYADMIN_PORT=8081    # Change phpMyAdmin port
 ```
 
 ## 🔧 Management

@@ -35,26 +35,15 @@ if errorlevel 1 (
     echo 💡 Try using port 3307, 3308, or 3309 instead
 )
 
-REM Check phpMyAdmin port
-netstat -an | findstr :%PHPMYADMIN_PORT% >nul
-if errorlevel 1 (
-    echo ✅ Port %PHPMYADMIN_PORT% is available (phpMyAdmin)
-) else (
-    echo ⚠️  Port %PHPMYADMIN_PORT% is already in use (phpMyAdmin)
-    echo 💡 Try using port 8081, 8082, or 9000 instead
-)
-
 echo.
 echo 📝 To change ports, edit your .env file:
 echo    APP_PORT=8000           # Change app port to 8000
 echo    DB_PORT=3307            # Change database port to 3307
-echo    PHPMYADMIN_PORT=8081    # Change phpMyAdmin port to 8081
 echo.
 echo Or set environment variables before running docker-compose:
 echo    set APP_PORT=8000
 echo    set DB_PORT=3307
-echo    set PHPMYADMIN_PORT=8081
-echo    docker-compose up -d
+echo    docker compose up -d
 echo.
 
 REM Interactive configuration
@@ -73,10 +62,6 @@ if /i "%configure_interactive%"=="y" (
     set /p new_db_port="Enter port for MySQL Database (current: %DB_PORT%): "
     if "%new_db_port%"=="" set new_db_port=%DB_PORT%
     
-    REM phpMyAdmin port
-    set /p new_phpmyadmin_port="Enter port for phpMyAdmin (current: %PHPMYADMIN_PORT%): "
-    if "%new_phpmyadmin_port%"=="" set new_phpmyadmin_port=%PHPMYADMIN_PORT%
-    
     echo.
     echo 📄 Creating .env file with new ports...
     
@@ -85,12 +70,10 @@ if /i "%configure_interactive%"=="y" (
     
     echo APP_PORT=%new_app_port% >> .env.temp
     echo DB_PORT=%new_db_port% >> .env.temp
-    echo PHPMYADMIN_PORT=%new_phpmyadmin_port% >> .env.temp
     
     REM Update .env file (basic approach for Windows)
     powershell -Command "(Get-Content .env) -replace '^APP_PORT=.*', 'APP_PORT=%new_app_port%' | Set-Content .env"
     powershell -Command "(Get-Content .env) -replace '^DB_PORT=.*', 'DB_PORT=%new_db_port%' | Set-Content .env"
-    powershell -Command "(Get-Content .env) -replace '^PHPMYADMIN_PORT=.*', 'PHPMYADMIN_PORT=%new_phpmyadmin_port%' | Set-Content .env"
     
     del .env.temp 2>nul
     
@@ -98,10 +81,9 @@ if /i "%configure_interactive%"=="y" (
     echo.
     echo 🚀 New access URLs will be:
     echo    - Fashion CMS: http://localhost:%new_app_port%
-    echo    - phpMyAdmin: http://localhost:%new_phpmyadmin_port%
     echo    - MySQL: localhost:%new_db_port%
     echo.
-    echo Run 'docker-compose up -d' to apply changes.
+    echo Run 'docker compose up -d' to apply changes.
 )
 
 pause
