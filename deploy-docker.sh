@@ -39,12 +39,12 @@ if [ ! -f ".env" ]; then
 # Port Configuration (change these if ports are not available)
 APP_PORT=3000
 DB_PORT=3306
-PHPMYADMIN_PORT=8080
+PHPMYADMIN_PORT=8081
 
 # Alternative port examples (uncomment and modify as needed):
 # APP_PORT=8000          # Use port 8000 for the app
 # DB_PORT=3307           # Use port 3307 for MySQL
-# PHPMYADMIN_PORT=8081   # Use port 8081 for phpMyAdmin
+# PHPMYADMIN_PORT=9000   # Use port 9000 for phpMyAdmin
 
 # Docker Environment Configuration for Fashion CMS
 # Copy this file to .env.docker and customize the values
