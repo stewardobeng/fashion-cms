@@ -16,11 +16,6 @@ const nextConfig = {
     unoptimized: true,
   },
   
-  // Docker standalone output configuration
-  ...(process.env.DOCKER_BUILD === 'true' && {
-    output: 'standalone',
-  }),
-  
   // Output configuration for different deployments
   ...(process.env.NODE_ENV === 'production' && process.env.DEPLOYMENT_TARGET === 'static' && {
     output: 'export',
