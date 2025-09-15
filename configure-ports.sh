@@ -3,7 +3,17 @@
 # Fashion CMS Port Configuration Helper
 # This script helps you configure custom ports for Docker deployment
 
-echo "🔧 Fashion CMS Port Configuration"
+# Detect Docker Compose command
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker-compose"
+elif command -v docker &> /dev/null && docker compose version &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker compose"
+else
+    echo "❌ Docker Compose not found. Please install Docker Compose first."
+    exit 1
+fi
+
+echo "🍭 Fashion CMS Port Configuration"
 echo "================================="
 
 # Function to check if port is available
@@ -58,7 +68,7 @@ echo "Or set environment variables:"
 echo "   export APP_PORT=8000"
 echo "   export DB_PORT=3307"
 echo "   export PHPMYADMIN_PORT=8081"
-echo "   docker-compose up -d"
+echo "   $DOCKER_COMPOSE_CMD up -d"
 echo ""
 
 # Interactive port configuration
@@ -123,5 +133,5 @@ if [[ $configure_interactive =~ ^[Yy]$ ]]; then
     echo "   - phpMyAdmin: http://localhost:$PHPMYADMIN_PORT"
     echo "   - MySQL: localhost:$DB_PORT"
     echo ""
-    echo "Run 'docker-compose up -d' to apply changes."
+    echo "Run '$DOCKER_COMPOSE_CMD up -d' to apply changes."
 fi

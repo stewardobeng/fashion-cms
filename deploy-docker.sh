@@ -15,14 +15,18 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
+# Check if Docker Compose is installed (support both v1 and v2)
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker-compose"
+    echo "✅ Docker Compose v1 is installed"
+elif command -v docker &> /dev/null && docker compose version &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker compose"
+    echo "✅ Docker Compose v2 is installed"
+else
     echo "❌ Docker Compose is not installed. Please install Docker Compose first."
     echo "Visit: https://docs.docker.com/compose/install/"
     exit 1
 fi
-
-echo "✅ Docker and Docker Compose are installed"
 
 # Create environment file if it doesn't exist
 if [ ! -f ".env" ]; then
@@ -48,16 +52,16 @@ APP_PORT=${APP_PORT:-3000}
 PHPMYADMIN_PORT=${PHPMYADMIN_PORT:-8080}
 
 echo "🔧 Building Docker images..."
-docker-compose build
+$DOCKER_COMPOSE_CMD build
 
 echo "🚀 Starting Fashion CMS..."
-docker-compose up -d
+$DOCKER_COMPOSE_CMD up -d
 
 echo "⏳ Waiting for services to be ready..."
 sleep 10
 
 # Check if services are running
-if docker-compose ps | grep -q "Up"; then
+if $DOCKER_COMPOSE_CMD ps | grep -q "Up"; then
     echo "✅ Fashion CMS is running!"
     echo ""
     echo "🌐 Application URLs:"
@@ -71,9 +75,9 @@ if docker-compose ps | grep -q "Up"; then
     echo "   - Username: fashionuser"
     echo "   - Password: (check .env file)"
     echo ""
-    echo "🔍 To view logs: docker-compose logs -f"
-    echo "🛑 To stop: docker-compose down"
+    echo "🔍 To view logs: $DOCKER_COMPOSE_CMD logs -f"
+    echo "🛑 To stop: $DOCKER_COMPOSE_CMD down"
 else
-    echo "❌ Failed to start services. Check logs with: docker-compose logs"
+    echo "❌ Failed to start services. Check logs with: $DOCKER_COMPOSE_CMD logs"
     exit 1
 fi

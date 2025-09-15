@@ -31,10 +31,10 @@ cp .env.docker .env
 nano .env  # Update JWT_SECRET, NEXTAUTH_SECRET, and passwords
 
 # 3. Start services
-docker-compose up -d
+docker compose up -d
 
 # 4. Check status
-docker-compose ps
+docker compose ps
 ```
 
 ## 📍 Access Points
@@ -69,16 +69,16 @@ PHPMYADMIN_PORT=8081    # Change phpMyAdmin port
 
 ```bash
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop services
-docker-compose down
+docker compose down
 
 # Restart services
-docker-compose restart
+docker compose restart
 
 # Update application
-docker-compose down && docker-compose build --no-cache && docker-compose up -d
+docker compose down && docker compose build --no-cache && docker compose up -d
 ```
 
 ## 🛡️ Security
@@ -98,10 +98,10 @@ For complete setup instructions, troubleshooting, and production deployment guid
 
 **Common Issues:**
 1. **Port conflicts**: Change ports in `docker-compose.yml`
-2. **Database connection**: Check MySQL container logs: `docker-compose logs mysql`
-3. **App won't start**: Check app logs: `docker-compose logs app`
+2. **Database connection**: Check MySQL container logs: `docker compose logs mysql`
+3. **App won't start**: Check app logs: `docker compose logs app`
 
 **Need Help?**
 - Check application health: `curl http://localhost:3000/api/health`
-- View all logs: `docker-compose logs -f`
-- Verify configuration: `docker-compose config`
+- View all logs: `docker compose logs -f`
+- Verify configuration: `docker compose config`

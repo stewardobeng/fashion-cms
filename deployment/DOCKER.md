@@ -140,13 +140,13 @@ services:
 
 ```bash
 # Linux/macOS
-APP_PORT=8000 DB_PORT=3307 PHPMYADMIN_PORT=8081 docker-compose up -d
+APP_PORT=8000 DB_PORT=3307 PHPMYADMIN_PORT=8081 docker compose up -d
 
 # Windows
 set APP_PORT=8000
 set DB_PORT=3307
 set PHPMYADMIN_PORT=8081
-docker-compose up -d
+docker compose up -d
 ```
 
 #### Method 4: Interactive Configuration
@@ -176,43 +176,55 @@ netstat -an | findstr :3000
 
 ### Starting Services
 ```bash
+# Docker Compose v2 (recommended)
+docker compose up -d
+
+# Docker Compose v1 (legacy)
 docker-compose up -d
 ```
 
 ### Stopping Services
 ```bash
+# Docker Compose v2
+docker compose down
+
+# Docker Compose v1
 docker-compose down
 ```
 
 ### Viewing Logs
 ```bash
 # All services
+docker compose logs -f
+# or
 docker-compose logs -f
 
 # Specific service
-docker-compose logs -f app
-docker-compose logs -f mysql
+docker compose logs -f app
+docker compose logs -f mysql
 ```
 
 ### Restarting Services
 ```bash
 # Restart all
+docker compose restart
+# or
 docker-compose restart
 
 # Restart specific service
-docker-compose restart app
+docker compose restart app
 ```
 
 ### Updating Application
 ```bash
 # Stop services
-docker-compose down
+docker compose down
 
 # Rebuild with latest code
-docker-compose build --no-cache
+docker compose build --no-cache
 
 # Start services
-docker-compose up -d
+docker compose up -d
 ```
 
 ## 🗄️ Database Management
@@ -318,21 +330,21 @@ curl http://localhost:3000/api/health
 **1. Database Connection Failed**
 ```bash
 # Check MySQL container logs
-docker-compose logs mysql
+docker compose logs mysql
 
 # Verify database is running
-docker-compose ps
+docker compose ps
 ```
 
 **2. Application Won't Start**
 ```bash
 # Check application logs
-docker-compose logs app
+docker compose logs app
 
 # Rebuild containers
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
+docker compose down
+docker compose build --no-cache
+docker compose up -d
 ```
 
 **3. Permission Issues**
