@@ -103,18 +103,73 @@ NEXTAUTH_URL=http://your-server-ip:3000
 
 ### Port Configuration
 
+### Port Configuration
+
 Default ports:
 - **Fashion CMS**: `3000`
 - **MySQL**: `3306`
 - **phpMyAdmin**: `8080`
 
-To change ports, edit `docker-compose.yml`:
+#### Method 1: Environment Variables (Recommended)
 
+Edit your `.env` file:
+```bash
+APP_PORT=8000           # Use port 8000 for the app
+DB_PORT=3307            # Use port 3307 for MySQL
+PHPMYADMIN_PORT=8081    # Use port 8081 for phpMyAdmin
+```
+
+#### Method 2: Direct Docker Compose Override
+
+Create `docker-compose.override.yml`:
 ```yaml
+version: '3.8'
 services:
   app:
     ports:
-      - "8000:3000"  # Change to port 8000
+      - "8000:3000"  # Change app to port 8000
+  mysql:
+    ports:
+      - "3307:3306"  # Change MySQL to port 3307
+  phpmyadmin:
+    ports:
+      - "8081:80"    # Change phpMyAdmin to port 8081
+```
+
+#### Method 3: Environment Variables at Runtime
+
+```bash
+# Linux/macOS
+APP_PORT=8000 DB_PORT=3307 PHPMYADMIN_PORT=8081 docker-compose up -d
+
+# Windows
+set APP_PORT=8000
+set DB_PORT=3307
+set PHPMYADMIN_PORT=8081
+docker-compose up -d
+```
+
+#### Method 4: Interactive Configuration
+
+```bash
+# Linux/macOS
+chmod +x configure-ports.sh
+./configure-ports.sh
+
+# Windows
+configure-ports.bat
+```
+
+#### Port Conflict Detection
+
+Check if ports are available:
+```bash
+# Linux/macOS
+netstat -tuln | grep :3000
+nc -z localhost 3000 && echo "Port 3000 is in use" || echo "Port 3000 is available"
+
+# Windows
+netstat -an | findstr :3000
 ```
 
 ## 🔧 Management Commands

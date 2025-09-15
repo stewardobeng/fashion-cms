@@ -32,9 +32,20 @@ if [ ! -f ".env" ]; then
     echo "   - JWT_SECRET"
     echo "   - NEXTAUTH_SECRET"
     echo "   - Database passwords"
+    echo "   - Port numbers (if defaults are in use)"
+    echo ""
+    echo "💡 You can also run './configure-ports.sh' to check and configure ports interactively"
     echo ""
     read -p "Press Enter after updating the .env file..."
 fi
+
+# Load environment variables
+if [ -f ".env" ]; then
+    export $(cat .env | grep -E '^[A-Z_]+=.*' | xargs)
+fi
+
+APP_PORT=${APP_PORT:-3000}
+PHPMYADMIN_PORT=${PHPMYADMIN_PORT:-8080}
 
 echo "🔧 Building Docker images..."
 docker-compose build
@@ -50,12 +61,12 @@ if docker-compose ps | grep -q "Up"; then
     echo "✅ Fashion CMS is running!"
     echo ""
     echo "🌐 Application URLs:"
-    echo "   - Fashion CMS: http://localhost:3000"
-    echo "   - phpMyAdmin: http://localhost:8080"
+    echo "   - Fashion CMS: http://localhost:$APP_PORT"
+    echo "   - phpMyAdmin: http://localhost:$PHPMYADMIN_PORT"
     echo ""
     echo "📊 Database Connection:"
     echo "   - Host: localhost"
-    echo "   - Port: 3306"
+    echo "   - Port: $DB_PORT"
     echo "   - Database: fashion_cms"
     echo "   - Username: fashionuser"
     echo "   - Password: (check .env file)"

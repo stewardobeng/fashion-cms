@@ -33,9 +33,21 @@ if not exist ".env" (
     echo    - JWT_SECRET
     echo    - NEXTAUTH_SECRET
     echo    - Database passwords
+    echo    - Port numbers (if defaults are in use)
+    echo.
+    echo 💡 You can also run 'configure-ports.bat' to check and configure ports interactively
     echo.
     pause
 )
+
+REM Load some environment variables for display
+set APP_PORT=3000
+set DB_PORT=3306
+set PHPMYADMIN_PORT=8080
+
+if defined APP_PORT_ENV set APP_PORT=%APP_PORT_ENV%
+if defined DB_PORT_ENV set DB_PORT=%DB_PORT_ENV%
+if defined PHPMYADMIN_PORT_ENV set PHPMYADMIN_PORT=%PHPMYADMIN_PORT_ENV%
 
 echo 🔧 Building Docker images...
 docker-compose build
@@ -56,12 +68,12 @@ if errorlevel 1 (
     echo ✅ Fashion CMS is running!
     echo.
     echo 🌐 Application URLs:
-    echo    - Fashion CMS: http://localhost:3000
-    echo    - phpMyAdmin: http://localhost:8080
+    echo    - Fashion CMS: http://localhost:%APP_PORT%
+    echo    - phpMyAdmin: http://localhost:%PHPMYADMIN_PORT%
     echo.
     echo 📊 Database Connection:
     echo    - Host: localhost
-    echo    - Port: 3306
+    echo    - Port: %DB_PORT%
     echo    - Database: fashion_cms
     echo    - Username: fashionuser
     echo    - Password: (check .env file)

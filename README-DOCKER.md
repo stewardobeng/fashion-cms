@@ -40,9 +40,30 @@ docker-compose ps
 ## 📍 Access Points
 
 After deployment:
-- **Fashion CMS**: http://localhost:3000
-- **phpMyAdmin**: http://localhost:8080
+- **Fashion CMS**: http://localhost:3000 (or your custom APP_PORT)
+- **phpMyAdmin**: http://localhost:8080 (or your custom PHPMYADMIN_PORT)
 - **Health Check**: http://localhost:3000/api/health
+
+### 🔧 Changing Ports
+
+If default ports are in use:
+
+**Quick Configuration:**
+```bash
+# Linux/macOS
+./configure-ports.sh
+
+# Windows
+configure-ports.bat
+```
+
+**Manual Configuration:**
+Edit `.env` file:
+```bash
+APP_PORT=8000           # Change app port
+DB_PORT=3307            # Change database port
+PHPMYADMIN_PORT=8081    # Change phpMyAdmin port
+```
 
 ## 🔧 Management
 
