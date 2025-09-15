@@ -3,9 +3,13 @@ set -e
 
 echo "🚀 Starting Fashion CMS Application..."
 
-# Wait for MySQL to be ready
+# Wait for MySQL to be ready using built-in approach
 echo "⏳ Waiting for MySQL database to be ready..."
-/usr/local/bin/wait-for-it.sh mysql:3306 --timeout=60 --strict -- echo "✅ MySQL is ready!"
+while ! nc -z mysql 3306; do
+  echo "Waiting for MySQL..."
+  sleep 2
+done
+echo "✅ MySQL is ready!"
 
 # Run Prisma migrations and setup
 echo "🔄 Running database migrations..."
