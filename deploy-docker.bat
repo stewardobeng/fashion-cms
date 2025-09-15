@@ -35,6 +35,38 @@ if not errorlevel 1 (
 REM Create environment file if it doesn't exist
 if not exist ".env" (
     echo 📝 Creating environment configuration...
+    
+    REM Check if .env.docker exists, if not create it
+    if not exist ".env.docker" (
+        echo ⚠️  .env.docker template not found. Creating default environment file...
+        (
+            echo # Port Configuration (change these if ports are not available)
+            echo APP_PORT=3000
+            echo DB_PORT=3306
+            echo PHPMYADMIN_PORT=8080
+            echo.
+            echo # MySQL Database Configuration
+            echo MYSQL_ROOT_PASSWORD=fashioncms2024
+            echo MYSQL_DATABASE=fashion_cms
+            echo MYSQL_USER=fashionuser
+            echo MYSQL_PASSWORD=fashionpass2024
+            echo.
+            echo # Application Database URL
+            echo DATABASE_URL=mysql://fashionuser:fashionpass2024@mysql:3306/fashion_cms
+            echo.
+            echo # JWT Authentication Secret (CHANGE THIS IN PRODUCTION!)
+            echo JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+            echo.
+            echo # NextAuth Configuration
+            echo NEXTAUTH_URL=http://localhost:3000
+            echo NEXTAUTH_SECRET=your-nextauth-secret-change-this-in-production
+            echo.
+            echo # Application Environment
+            echo NODE_ENV=production
+        ) > .env.docker
+        echo ✅ Created default .env.docker file
+    )
+    
     copy .env.docker .env
     echo ⚠️  Please edit .env file and update the secret keys before continuing!
     echo    - JWT_SECRET
