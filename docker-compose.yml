@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql:
+    image: mysql:8.0
+    container_name: fashion-cms-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fashioncms2024}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-fashion_cms}
+      MYSQL_USER: ${MYSQL_USER:-fashionuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-fashionpass2024}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - fashion-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Fashion CMS Application Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fashion-cms-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://${MYSQL_USER:-fashionuser}:${MYSQL_PASSWORD:-fashionpass2024}@mysql:3306/${MYSQL_DATABASE:-fashion_cms}
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-nextauth-secret-change-this-in-production}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - fashion-network
+    volumes:
+      - app_uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: PhpMyAdmin for database management
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: fashion-cms-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: ${MYSQL_USER:-fashionuser}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-fashionpass2024}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fashioncms2024}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - fashion-network
+
+volumes:
+  mysql_data:
+    driver: local
+  app_uploads:
+    driver: local
+
+networks:
+  fashion-network:
+    driver: bridge

@@ -25,6 +25,7 @@ npm start
 
 ## Deployment
 
+- **Docker** (Recommended): See `README-DOCKER.md` for one-command deployment
 - **Vercel**: See `deployment/VERCEL.md`
 - **Shared Hosting**: See `deployment/SHARED_HOSTING.md`
 
